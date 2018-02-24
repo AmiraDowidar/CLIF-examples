@@ -42,7 +42,7 @@
 					<sample use="web" name="get">
 						<params>
 							<param name="uri"
-								value="http://127.0.0.1/">
+								value="http://127.0.0.1:443/">
 							</param>
 							<param name="redirect" value="enabled;"></param>
 							<param name="headers" value=""></param>
