@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+	<!DOCTYPE scenario SYSTEM "classpath:org/ow2/clif/scenario/isac/dtd/scenario.dtd">
+	<scenario>
+		<behaviors>
+			<plugins>
+				<use id="sync_default" name="Synchro">
+					<params>
+						<param name="distributed" value="yes"></param>
+						<param name="domain" value="default"></param>
+						<param name="id" value=''></param>
+					</params>
+				</use>
+				<use id="common" name="Common">
+					<params>
+						<param name="id" value=''></param>
+					</params>
+				</use>
+				<use id="rand" name="Random">
+					<params>
+						<param name="id" value=''></param>
+					</params>
+				</use>
+				<use id="const" name="Context">
+					<params>
+						<param name="variables" value=''></param>
+						<param name="files" value='synchro.props;'></param>
+						<param name="id" value=''></param>
+					</params>
+				</use>
+				<use id="chrono" name="Chrono">
+					<params>
+						<param name="id" value=''></param>
+					</params>
+				</use>
+			</plugins>
+			<behavior id="B0">
+				<control use="rand" name="setUniform">
+					<params>
+						<param name="min" value="0"></param>
+						<param name="max" value="10000"></param>
+						<param name="id" value=''></param>
+					</params>
+				</control>
+				<timer use="rand" name="sleep">
+					<params>
+						<param name="id" value=''></param>
+					</params>
+				</timer>
+				<control use="sync_default" name="notify">
+					<params>
+						<param name="lock" value="ready"></param>
+						<param name="id" value=''></param>
+					</params>
+				</control>
+				<control use="chrono" name="start">
+					<params>
+						<param name="id" value=''></param>
+					</params>
+				</control>
+
+				<sample use="common" name="log">
+					<params>
+						<param name="duration" value="0"></param>
+						<param name="comment"
+							value='start waiting on lock "ready"'>
+						</param>
+						<param name="result" value="WAITN"></param>
+						<param name="successful" value="yes"></param>
+						<param name="iteration" value="0"></param>
+						<param name="id" value=''></param>
+					</params>
+				</sample>
+				<control use="sync_default" name="waitN">
+					<params>
+						<param name="lock" value="ready"></param>
+						<param name="timeout" value="30000"></param>
+						<param name="times" value="${const:n}"></param>
+						<param name="id" value=''></param>
+					</params>
+				</control>
+				<if>
+					<condition use="sync_default" name="wasNotifiedN">
+						<params>
+							<param name="times" value="${const:n}"></param>
+							<param name="lock" value="ready"></param>
+							<param name="options" value=""></param>
+						</params>
+					</condition>
+					<then>
+						<sample use="common" name="log">
+							<params>
+								<param name="duration"
+									value="${chrono:}">
+								</param>
+								<param name="comment"
+									value='successful synchro on lock "ready"'>
+								</param>
+								<param name="result" value="OK"></param>
+								<param name="successful" value="yes"></param>
+								<param name="iteration" value="0"></param>
+								<param name="id" value=''></param>
+							</params>
+						</sample>
+					</then>
+					<else>
+						<sample use="common" name="log">
+							<params>
+								<param name="duration"
+									value="${chrono:}">
+								</param>
+								<param name="comment"
+									value='failed synchro on lock "ready"'>
+								</param>
+								<param name="result" value="TIMEOUT"></param>
+								<param name="successful" value="no"></param>
+								<param name="iteration" value="0"></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+					</else>
+				</if>
+
+				<sample use="common" name="log">
+					<params>
+						<param name="duration" value="0"></param>
+						<param name="comment"
+							value='start rendez-vous on lock "done"'>
+						</param>
+						<param name="result" value="RENDEZ-VOUS"></param>
+						<param name="successful" value="yes"></param>
+						<param name="iteration" value="0"></param>
+						<param name="id" value=""></param>
+					</params>
+				</sample>
+				<control use="sync_default" name="rendez-vous">
+					<params>
+						<param name="lock" value="done"></param>
+						<param name="timeout" value="30000"></param>
+						<param name="id" value=""></param>
+					</params>
+				</control>
+				<if>
+					<condition use="sync_default" name="wasNotifiedN">
+						<params>
+							<param name="times" value="${const:n}"></param>
+							<param name="lock" value="done"></param>
+							<param name="options" value=""></param>
+						</params>
+					</condition>
+					<then>
+						<sample use="common" name="log">
+							<params>
+								<param name="duration"
+									value="${chrono:}">
+								</param>
+								<param name="comment"
+									value='successful synchro on lock "done"'>
+								</param>
+								<param name="result" value="OK"></param>
+								<param name="successful" value="yes"></param>
+								<param name="iteration" value="0"></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+					</then>
+					<else>
+						<sample use="common" name="log">
+							<params>
+								<param name="duration"
+									value="${chrono:}">
+								</param>
+								<param name="comment"
+									value='failed synchro on lock "done"'>
+								</param>
+								<param name="result" value="TIMEOUT"></param>
+								<param name="successful" value="no"></param>
+								<param name="iteration" value="0"></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+					</else>
+				</if>
+			</behavior>
+			<behavior id="B1">
+				<control use="sync_default" name="waitN">
+					<params>
+						<param name="lock" value="done"></param>
+						<param name="timeout" value="30000"></param>
+						<param name="times" value="${const:n}"></param>
+						<param name="id" value=''></param>
+					</params>
+				</control>
+				<control use="common" name="alarm">
+					<params>
+						<param name="message" value="synchro scenario completed"></param>
+						<param name="id" value=''></param>
+					</params>
+				</control>
+			</behavior>
+		</behaviors>
+		<loadprofile>
+			<group behavior="B0" forceStop="false">
+				<ramp style="line">
+					<points>
+						<point x="0" y="0"></point>
+						<point x="10" y="100"></point>
+					</points>
+				</ramp>
+				<ramp style="line">
+					<points>
+						<point x="10" y="100"></point>
+						<point x="11" y="100"></point>
+					</points>
+				</ramp>
+			</group>
+		<group behavior="B1" forceStop="false"><ramp style="crenel_hv"><points><point x="0" y="1"></point><point x="1" y="1"></point></points></ramp></group></loadprofile>
+</scenario>

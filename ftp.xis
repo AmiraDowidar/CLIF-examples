@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+	<!DOCTYPE scenario SYSTEM "classpath:org/ow2/clif/scenario/isac/dtd/scenario.dtd">
+	<scenario>
+		<behaviors>
+			<plugins>
+				<use id="ftp" name="FtpInjector">
+					<params>
+						<param name="id" value=''></param>
+					</params>
+				</use>
+				
+			<use id="const" name="Context"><params><param name="variables" value=''></param><param name="files" value='ftp.props;'></param><param name="id" value=''></param></params></use><use id="sync" name="Synchro"><params><param name="id" value=''></param></params></use><use id="step" name="Counter"><params><param name="value_arg" value="0"></param><param name="shared_arg" value="enabled;"></param><param name="id" value=''></param></params></use></plugins>
+			<behavior id="upload">
+				<sample use="ftp" name="connect">
+					<params>
+						<param name="host" value="${const:server}"></param>
+						<param name="port" value="21"></param>
+						<param name="localaddress" value=""></param>
+						<param name="comment" value=""></param>
+						<param name="id" value=''></param>
+					</params>
+				</sample>
+				<if>
+					<condition use="ftp" name="connected"></condition>
+					<then>
+						<sample use="ftp" name="login">
+							<params>
+								<param name="login" value="${const:user}"></param>
+								<param name="password"
+									value="${const:pass}">
+								</param>
+								<param name="comment" value=""></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+						<sample use="ftp" name="store">
+							<params>
+								<param name="content"
+									value="generated">
+								</param>
+								<param name="file" value=""></param>
+								<param name="limit"
+									value="size or time">
+								</param>
+								<param name="size" value="2048000"></param>
+								<param name="time" value="10000"></param>
+								<param name="remote file"
+									value="/tmp/ftp-${step:}.bin">
+								</param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+						<control use="sync" name="notify"><params><param name="lock" value="${step:}-up"></param><param name="id" value=''></param></params></control><control use="sync" name="wait"><params><param name="lock" value="${step:}-down"></param><param name="timeout" value="0"></param><param name="id" value=''></param></params></control><sample use="ftp" name="delete"><params><param name="file" value="/tmp/ftp-${step:}.bin"></param><param name="id" value=""></param></params></sample><control use="step" name="inc"><params><param name="id" value=""></param></params></control><sample use="ftp" name="logout">
+							<params>
+								<param name="comment" value=""></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample><sample use="ftp" name="disconnect">
+							<params>
+								<param name="comment" value=""></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+						
+					</then>
+				</if>
+				
+			</behavior>
+		<behavior id="download">
+				<control use="sync" name="wait"><params><param name="lock" value="${step:}-up"></param><param name="timeout" value="11000"></param><param name="id" value=''></param></params></control><sample use="ftp" name="connect">
+					<params>
+						<param name="host" value="${const:server}"></param>
+						<param name="port" value="21"></param>
+						<param name="localaddress" value=""></param>
+						<param name="comment" value=""></param>
+						<param name="id" value=""></param>
+					</params>
+				</sample>
+				<if>
+					<condition use="ftp" name="connected"></condition>
+					<then>
+						<sample use="ftp" name="login">
+							<params>
+								<param name="login" value="${const:user}"></param>
+								<param name="password" value="${const:pass}">
+								</param>
+								<param name="comment" value=""></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+						<sample use="ftp" name="retrieve"><params><param name="remote file" value="/tmp/ftp-${step:}.bin"></param><param name="destination" value="discard"></param><param name="local file" value=""></param><param name="policy" value="none"></param><param name="size" value=""></param><param name="time" value=""></param><param name="id" value=''></param></params></sample>
+						<control use="sync" name="notify"><params><param name="lock" value="${step:}-down"></param><param name="id" value=''></param></params></control><sample use="ftp" name="logout">
+							<params>
+								<param name="comment" value=""></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+						<sample use="ftp" name="disconnect">
+							<params>
+								<param name="comment" value=""></param>
+								<param name="id" value=""></param>
+							</params>
+						</sample>
+					</then>
+				</if>
+				
+			</behavior></behaviors>
+		<loadprofile><group behavior="upload" forceStop="false"><ramp style="line"><points><point x="0" y="1"></point><point x="60" y="1"></point></points></ramp></group><group behavior="download" forceStop="false"><ramp style="line"><points><point x="0" y="1"></point><point x="60" y="1"></point></points></ramp></group></loadprofile>
+</scenario>

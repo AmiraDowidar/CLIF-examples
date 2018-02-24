@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+	<!DOCTYPE scenario SYSTEM "classpath:org/ow2/clif/scenario/isac/dtd/scenario.dtd">
+	<scenario>
+		<behaviors>
+			<plugins>
+				<use id="string" name="StringHandler">
+					<params>
+						<param name="default"
+							value='ab cd name="case" value="one" efg hij'>
+						</param>
+					</params>
+				</use>
+				<use id="common" name="Common"></use>
+				<use id="timer 1s" name="ConstantTimer">
+					<params>
+						<param name="duration_arg" value="1000"></param>
+					</params>
+				</use>
+			</plugins>
+			<behavior id="b0">
+				<control use="common" name="printout">
+					<params>
+						<param name="string"
+							value="${string:} (length ${string:#})">
+						</param>
+					</params>
+				</control>
+				<control use="string" name="setPattern">
+					<params>
+						<param name="pattern"
+							value='name="case" value="([^"]*)"'>
+						</param>
+					</params>
+				</control>
+				<control use="string" name="match">
+					<params>
+						<param name="skip" value="0"></param>
+					</params>
+				</control>
+				<control use="string" name="capture">
+					<params>
+						<param name="level" value="1"></param>
+						<param name="variable" value="tag"></param>
+					</params>
+				</control>
+				<control use="common" name="printout">
+					<params>
+						<param name="string" value="${string:tag}"></param>
+					</params>
+				</control>
+				<control use="string" name="cut">
+					<params>
+						<param name="tail" value="4"></param>
+						<param name="head" value="3"></param>
+					</params>
+				</control>
+				<control use="common" name="printout">
+					<params>
+						<param name="string"
+							value="${string:} (length ${string:#})">
+						</param>
+					</params>
+				</control>
+				<control use="string" name="replaceAllMatches">
+					<params>
+						<param name="replace"
+							value='name="case" value="1"'>
+						</param>
+					</params>
+				</control>
+				<control use="common" name="printout">
+					<params>
+						<param name="string"
+							value="${string:} (length ${string:#})">
+						</param>
+					</params>
+				</control>
+				<timer use="timer 1s" name="sleep"></timer>
+			</behavior>
+		</behaviors>
+		<loadprofile>
+
+			<group behavior="b0" forceStop="false">
+				<ramp style="line">
+					<points>
+						<point x="0" y="1"></point>
+						<point x="1" y="1"></point>
+					</points>
+				</ramp>
+			</group>
+		</loadprofile>
+</scenario>
