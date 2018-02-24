@@ -42,14 +42,14 @@
 					<sample use="web" name="get">
 						<params>
 							<param name="uri"
-								value="http://127.0.0.1:443/">
+								value="http://localhost:8080/">
 							</param>
 							<param name="redirect" value="enabled;"></param>
 							<param name="headers" value=""></param>
 							<param name="parameters" value=""></param>
 							<param name="response-body" value=""></param>
-							<param name="username" value="user"></param>
-							<param name="password" value="password"></param>
+							<param name="username" value=""></param>
+							<param name="password" value=""></param>
 							<param name="hostauth" value=""></param>
 							<param name="realm" value=""></param>
 							<param name="proxylogin" value=""></param>
